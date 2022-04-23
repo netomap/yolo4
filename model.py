@@ -67,9 +67,12 @@ class Model(nn.Module):
     def forward(self, x):
         return self.net(x)
 
-if __name__ == '__main__':
+def testar_modelo():
     model = Model(4, 3, 3, 400)
     print (model)
     input_test = torch.rand((1, 3, 400, 400))
     output = model(input_test)
     print (f'output.shape: {output.shape}')
+
+if __name__ == '__main__':
+    testar_modelo()
