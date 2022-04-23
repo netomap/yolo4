@@ -24,7 +24,7 @@ def create_image(n_objects):
 
     for n in range(n_objects):
         
-        w, h = randint(50, 70), randint(50, 70)
+        w, h = randint(60, 90), randint(60, 90)
         x1, y1 = randint(0, imgw-w), randint(0, imgh-h)
         x2, y2 = x1+w, y1+h
         xc, yc = x1+w/2, y1+h/2
@@ -36,7 +36,7 @@ def create_image(n_objects):
             p0, p1, p2 = (x1, y2), (x2, y2), (xc,y1)
             draw.polygon([p0, p1, p2], fill=random_color())
         
-        annotations.append([imgw, imgh, xc/imgw, yc/imgh, w/imgw, h/imgh])
+        annotations.append([imgw, imgh, tipo, xc/imgw, yc/imgh, w/imgw, h/imgh])
     
     return img_pil, annotations
 
@@ -49,11 +49,11 @@ def create_images_dataset(n_images):
     for n in tqdm(range(n_images)):
         img_path = f'{imgs_dir}img_{n}.jpg'
         img_pil, annotations = create_image(randint(1, 4))
-        for imgw, imgh, xc, yc, w, h in annotations:
-            df_annotations.append([img_path, imgw, imgh, xc, yc, w, h])
+        for imgw, imgh, classe, xc, yc, w, h in annotations:
+            df_annotations.append([img_path, imgw, imgh, classe, xc, yc, w, h])
         img_pil.save(img_path)
     
-    df_annotations = pd.DataFrame(df_annotations, columns=['img_path', 'imgw', 'imgh', 'xc', 'yc', 'w', 'h'])
+    df_annotations = pd.DataFrame(df_annotations, columns=['img_path', 'imgw', 'imgh', 'classe', 'xc', 'yc', 'w', 'h'])
     df_annotations.to_csv('annotations.csv', index=False)
     print (f'Dataset criado!')
 
