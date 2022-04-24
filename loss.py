@@ -102,8 +102,8 @@ class Yolo_Loss(nn.Module):
         # PERDA PARA NO_OBJ CLASSES =====================================================
 
         # PERDA PARA PROB_OBJ ===========================================================
-        predicts_prob_obj = predicts_tensor[...,self.C]
-        targets_prob_obj = targets_tensor[..., self.C]
+        predicts_prob_obj = predicts_tensor[...,self.C:self.C+1]
+        targets_prob_obj = targets_tensor[..., self.C:self.C+1]
         loss_obj = self.mse(
             exists_box * predicts_prob_obj,
             exists_box * targets_prob_obj
