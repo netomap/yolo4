@@ -3,11 +3,16 @@ from torch import nn
 
 class Model(nn.Module):
 
-    def __init__(self, S, B, C, IMG_SIZE, architecture_config = None):
+    def __init__(self, S, C, IMG_SIZE, anchors= None, architecture_config = None):
         super(Model, self).__init__()
 
         self.S = S
-        self.B = B
+        anchors_default = torch.tensor([
+            [1., 1.],
+            [.5, .5],
+            [1.3, 0.7],
+            [0.7, 1.3]
+        ])
         self.C = C
         self.IMG_SIZE = IMG_SIZE
         architecture_default = [
@@ -29,6 +34,8 @@ class Model(nn.Module):
             'linear,1024,-1'
         ]
         self.architecture_config = architecture_config if (architecture_config) else architecture_default
+        self.anchors = anchors if (anchors) else anchors_default
+        self.B = len(self.anchors)
 
         self.net = nn.Sequential(*self.create_blocks())
     
@@ -68,7 +75,7 @@ class Model(nn.Module):
         return self.net(x)
 
 def testar_modelo():
-    model = Model(4, 3, 3, 400)
+    model = Model(4, 3, 400)
     print (model)
     input_test = torch.rand((1, 3, 400, 400))
     output = model(input_test)

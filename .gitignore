@@ -1,2 +1,4 @@
 imgs/
 checkpoints/
+testes.ipynb
+__pycache__/
