@@ -11,20 +11,21 @@ def random_color():
     return (randint(0, 150), randint(0, 150), randint(0, 150))
 
 def create_image(n_objects):
-    backgrounds_list = [str(p) for p in pathlib.Path('./backgrounds').glob('*.jpg')]
+    # backgrounds_list = [str(p) for p in pathlib.Path('./backgrounds').glob('*.jpg')]
 
     imgw, imgh = randint(300, 400), randint(300, 400)
-    img_pil = Image.open(choice(backgrounds_list)).resize((imgw, imgh))
-
-    if (random() > 0.5): img_pil = img_pil.transpose(Image.FLIP_LEFT_RIGHT)
-    if (random() > 0.5): img_pil = img_pil.transpose(Image.FLIP_TOP_BOTTOM)
+    img_pil = Image.new('RGB', size=(imgw, imgh), color='white')
 
     draw = ImageDraw.Draw(img_pil)
     annotations = []
 
+    for _ in range(90):
+        x1, y1, x2, y2 = randint(0, imgw), randint(0, imgh), randint(0, imgw), randint(0, imgh)
+        draw.line([x1, y1, x2, y2], fill=random_color(), width=1)
+
     for n in range(n_objects):
         
-        w, h = randint(60, 90), randint(60, 90)
+        w, h = randint(30, 50), randint(30, 50)
         x1, y1 = randint(0, imgw-w), randint(0, imgh-h)
         x2, y2 = x1+w, y1+h
         xc, yc = x1+w/2, y1+h/2
@@ -48,7 +49,7 @@ def create_images_dataset(n_images):
     df_annotations = []
     for n in tqdm(range(n_images)):
         img_path = f'{imgs_dir}img_{n}.jpg'
-        img_pil, annotations = create_image(randint(1, 4))
+        img_pil, annotations = create_image(randint(1, 5))
         for imgw, imgh, classe, xc, yc, w, h in annotations:
             df_annotations.append([img_path, imgw, imgh, classe, xc, yc, w, h])
         img_pil.save(img_path)

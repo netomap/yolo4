@@ -30,13 +30,13 @@ class Yolo_Dataset(Dataset):
         annotations = self.annotations[self.annotations['img_path'] == img_path].values
         img_pil = Image.open(img_path)
 
-        # if (random() > 0.5):
-        #     img_pil = img_pil.transpose(Image.FLIP_LEFT_RIGHT)
-        #     annotations[:,4] = 1 - annotations[:,4]
+        if (random() > 0.5):
+            img_pil = img_pil.transpose(Image.FLIP_LEFT_RIGHT)
+            annotations[:,4] = 1 - annotations[:,4]
         
-        # if (random() > 0.5):
-        #     img_pil = img_pil.transpose(Image.FLIP_TOP_BOTTOM)
-        #     annotations[:,5] = 1 - annotations[:,5]
+        if (random() > 0.5):
+            img_pil = img_pil.transpose(Image.FLIP_TOP_BOTTOM)
+            annotations[:,5] = 1 - annotations[:,5]
         
         img_tensor = self.transformer(img_pil)
         target_tensor = self.preparar_anotacoes(annotations)
@@ -81,7 +81,7 @@ def testar_yolo_dataset():
     df = pd.read_csv('annotations.csv')
     imgs_list = df['img_path'].unique()
 
-    S = 4
+    S = 7
     B = 3
     C = 3
     IMG_SIZE = 400
