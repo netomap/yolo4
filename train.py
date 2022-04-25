@@ -63,4 +63,4 @@ for epoch in range(EPOCHS):
     test_loss = validar_epoca(test_dataloader, loss_fn, model, DEVICE)
     print (Fore.YELLOW + f'epoca: {epoch}, train_loss: {round(train_loss, 3)}, test_loss: {round(test_loss, 3)}' + Fore.RESET)
     salvar_checkpoint(model, epoch)
-    analisar_resultado_epoca(test_dataloader, model, epoch, class_threshold=0.6)
+    analisar_resultado_epoca(test_dataloader, model, epoch, class_threshold=0.6, device=DEVICE)

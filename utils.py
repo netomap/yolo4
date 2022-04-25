@@ -71,7 +71,7 @@ def salvar_checkpoint(model, epoch):
     }
     torch.save(checkpoint, f'{checkpoints_dir}checkpoint_{epoch}.pth')
 
-def analisar_resultado_epoca(dataloader_, model, epoch, class_threshold=0.5):
+def analisar_resultado_epoca(dataloader_, model, epoch, class_threshold=0.5, device = torch.device('cpu')):
 
     inv_transformer = transforms.Compose([
         transforms.Normalize(mean=(-1., -1., -1.), std=(2., 2., 2.)),
@@ -86,7 +86,7 @@ def analisar_resultado_epoca(dataloader_, model, epoch, class_threshold=0.5):
     model.eval()
     with torch.no_grad():
         imgs_tensor, targets_tensor = next(iter(dataloader_))
-        predicts_tensor = model(imgs_tensor)
+        predicts_tensor = model(imgs_tensor.to(device))
 
         predicts_tensor = predicts_tensor.reshape((-1, S, S, B, C+5))
         predicts_tensor[..., C+1:C+3] = torch.sigmoid(predicts_tensor[..., C+1:C+3])
