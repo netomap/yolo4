@@ -105,7 +105,7 @@ def analisar_resultado_epoca(dataloader_, model, epoch, class_threshold=0.5, dev
                 bboxes[:, -4:] = bboxes[:, -4:] * cell_size # multiplica xc, yc, w, h por cell_size
                 bboxes[:, -4] = bboxes[:, -4] + coluna*cell_size # soma xc com offset X
                 bboxes[:, -3] = bboxes[:, -3] + linha*cell_size # soma yc com offset Y
-                for box in bboxes:
+                for anchor_num, box in enumerate(bboxes):
                     classes = box[:C]
                     classes = torch.softmax(classes, dim=-1)
                     prob_class, ind_class = classes.max(0)
@@ -116,8 +116,11 @@ def analisar_resultado_epoca(dataloader_, model, epoch, class_threshold=0.5, dev
                         x1, y1, x2, y2 = x1*imgw, y1*imgh, x2*imgw, y2*imgh
                         anotacoes.append([prob_class, ind_class.item(), x1, y1, x2, y2])
                         draw.rectangle([x1, y1, x2, y2], fill=None, outline='red', width=1)
-                        draw.rectangle([x1, y1-15, x1+50, y1], fill='red')
-                        draw.text([x1+2, y1-13], str(ind_class.item()) + '-' + str(int(100*prob_class.item())) + "%", fill='white')
+                        draw.rectangle([x1, y1-15, x1+80, y1], fill='red')
+                        # draw.text([x1+2, y1-13], str(ind_class.item()) + '-' + str(int(100*prob_class.item())) + "%", fill='white')
+                        texto = f'an{anchor_num}po{int(100*prob_obj.item())}c{ind_class.item()}pc{int(100*prob_class.item())}'
+                        draw.text([x1+2, y1-13], texto, fill='white')
+
     
     results_dir = './img_results/'
     if (not(os.path.exists(results_dir))): os.mkdir(results_dir)
@@ -159,7 +162,7 @@ def predict(model, img_pil, class_threshold=0.5):
             bboxes[:, -4:] = bboxes[:, -4:] * cell_size # multiplica xc, yc, w, h por cell_size
             bboxes[:, -4] = bboxes[:, -4] + coluna*cell_size # soma xc com offset X
             bboxes[:, -3] = bboxes[:, -3] + linha*cell_size # soma yc com offset Y
-            for box in bboxes:
+            for anchor_num, box in enumerate(bboxes):
                 classes = box[:C]
                 classes = torch.softmax(classes, dim=-1)
                 prob_class, ind_class = classes.max(0)
@@ -170,7 +173,9 @@ def predict(model, img_pil, class_threshold=0.5):
                     x1, y1, x2, y2 = x1*imgw, y1*imgh, x2*imgw, y2*imgh
                     anotacoes.append([prob_class, ind_class.item(), x1, y1, x2, y2])
                     draw.rectangle([x1, y1, x2, y2], fill=None, outline='red', width=1)
-                    draw.rectangle([x1, y1-15, x1+50, y1], fill='red')
-                    draw.text([x1+2, y1-13], str(ind_class.item()) + '-' + str(int(100*prob_class.item())) + "%", fill='white')
+                    draw.rectangle([x1, y1-15, x1+80, y1], fill='red')
+                    # draw.text([x1+2, y1-13], str(ind_class.item()) + '-' + str(int(100*prob_class.item())) + "%", fill='white')
+                    texto = f'an{anchor_num}po{int(100*prob_obj.item())}c{ind_class.item()}pc{int(100*prob_class.item())}'
+                    draw.text([x1+2, y1-13], texto, fill='white')
     
     return img_pil, anotacoes

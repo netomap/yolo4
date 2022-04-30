@@ -8,30 +8,33 @@ class Model(nn.Module):
 
         self.S = S
         anchors_default = torch.tensor([
+            [8., 8.],
+            [5., 5.],
+            [4., 4.],
+            [3., 3.],
+            [2., 2.],
             [1., 1.],
-            [.5, .5],
-            [1.3, 0.7],
-            [0.7, 1.3]
+            [0.8, 0.8]
         ])
         self.C = C
         self.IMG_SIZE = IMG_SIZE
         architecture_default = [
-            'conv2d,3,32,3,2,0',
+            'conv2d,3,64,3,2,0',
             'leakyrelu,0.2',
-            'conv2d,32,32,3,2,0',
+            'conv2d,64,64,3,2,0',
             'leakyrelu,0.2',
-            'conv2d,32,32,3,2,0',
+            'conv2d,64,64,3,2,0',
             'leakyrelu,0.2',
-            'conv2d,32,32,3,2,0',
+            'conv2d,64,64,3,2,0',
             'leakyrelu,0.2',
-            'conv2d,32,32,3,2,0',
+            'conv2d,64,64,3,2,0',
             'leakyrelu,0.2',
-            'conv2d,32,32,3,2,0',
+            'conv2d,64,64,3,2,0',
             'leakyrelu,0.2',
             'flatten,',
-            'linear,-1,1024',
+            'linear,-1,2048',
             'leakyrelu,0.2',
-            'linear,1024,-1'
+            'linear,2048,-1'
         ]
         self.architecture_config = architecture_config if (architecture_config) else architecture_default
         self.anchors = anchors if (anchors) else anchors_default

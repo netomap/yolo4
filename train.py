@@ -12,14 +12,18 @@ parser.add_argument('--imgsize', type=int, default=350, help='Redimensionamento 
 parser.add_argument('--e', type=int, default=10, help='Número de épocas.')
 parser.add_argument('--lr', type=float, default=1e-4, help='LEARNING RATE.')
 parser.add_argument('--batchsize', type=int, default=16, help='Tamanho do lote.')
+parser.add_argument('--ct', type=float, default=0.5, help='Class threshold.')
 
 args = parser.parse_args()
+print (f'{Fore.RED}{args}{Fore.RESET}')
+
 S = args.s
 C = 3 # número de classes
 IMG_SIZE = args.imgsize
 EPOCHS = args.e
 LEARNING_RATE = args.lr
 BATCH_SIZE = args.batchsize
+CLASS_THRESHOLD = args.ct
 
 print ('preparando device...')
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -63,4 +67,4 @@ for epoch in range(EPOCHS):
     test_loss = validar_epoca(test_dataloader, loss_fn, model, DEVICE)
     print (Fore.YELLOW + f'epoca: {epoch}, train_loss: {round(train_loss, 3)}, test_loss: {round(test_loss, 3)}' + Fore.RESET)
     salvar_checkpoint(model, epoch)
-    analisar_resultado_epoca(test_dataloader, model, epoch, class_threshold=0.6, device=DEVICE)
+    analisar_resultado_epoca(test_dataloader, model, epoch, class_threshold=CLASS_THRESHOLD, device=DEVICE)
