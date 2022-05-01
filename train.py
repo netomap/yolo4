@@ -5,6 +5,7 @@ from utils import preparar_dataloaders, validar_epoca, salvar_checkpoint, analis
 from argparse import ArgumentParser
 from tqdm import tqdm
 from colorama import Fore
+from torch.optim.lr_scheduler import StepLR, MultiStepLR, LambdaLR
 
 parser = ArgumentParser()
 parser.add_argument('--s', type=int, default=4, help='Número de grids nas imagens.')
@@ -37,6 +38,7 @@ model.anchors = model.anchors.to(DEVICE)
 
 print ('preparando otimizador')
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+scheduler = MultiStepLR(optimizer, [3, 10, 20, 30], gamma=0.1) # 1e-3, 1e-4, 1e-5, 1e-6
 
 print ('preparando funcao perda...')
 loss_fn = Yolo_Loss(S, B, C)
@@ -62,6 +64,8 @@ for epoch in range(EPOCHS):
 
         train_loss += loss.item()
         elementos += len(imgs_tensor)
+    
+    scheduler.step()
     
     train_loss = train_loss / elementos
     test_loss = validar_epoca(test_dataloader, loss_fn, model, DEVICE)
