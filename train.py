@@ -14,6 +14,7 @@ parser.add_argument('--e', type=int, default=10, help='Número de épocas.')
 parser.add_argument('--lr', type=float, default=1e-4, help='LEARNING RATE.')
 parser.add_argument('--batchsize', type=int, default=16, help='Tamanho do lote.')
 parser.add_argument('--ct', type=float, default=0.5, help='Class threshold.')
+parser.add_argument('--g', type=float, default=0.5, help='GAMMA STEP DO LEARNING RATE')
 
 args = parser.parse_args()
 print (f'{Fore.RED}{args}{Fore.RESET}')
@@ -25,6 +26,7 @@ EPOCHS = args.e
 LEARNING_RATE = args.lr
 BATCH_SIZE = args.batchsize
 CLASS_THRESHOLD = args.ct
+GAMMA = args.g
 
 print ('preparando device...')
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -38,7 +40,7 @@ model.anchors = model.anchors.to(DEVICE)
 
 print ('preparando otimizador')
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-scheduler = MultiStepLR(optimizer, [3, 10, 20, 30], gamma=0.1) # 1e-3, 1e-4, 1e-5, 1e-6
+scheduler = MultiStepLR(optimizer, [3, 10, 20, 30], gamma=GAMMA) # 1e-3, 1e-4, 1e-5, 1e-6
 
 print ('preparando funcao perda...')
 loss_fn = Yolo_Loss(S, B, C)
