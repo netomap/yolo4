@@ -93,24 +93,27 @@ class Yolo_Loss(nn.Module):
         )
         # PERDA PARA CLASSES ============================================================
 
-        # PERDA PARA NO_OBJ CLASSES =====================================================
-        no_obj_box = 1 - exists_box
-        loss_noobj_classes = self.mse(
-            no_obj_box * predicts_classes,
-            no_obj_box * targets_classes
-        )
-        # PERDA PARA NO_OBJ CLASSES =====================================================
-
-        # PERDA PARA PROB_OBJ ===========================================================
         predicts_prob_obj = predicts_tensor[...,self.C:self.C+1]
         targets_prob_obj = targets_tensor[..., self.C:self.C+1]
+        
+        # PERDA PARA PROB_OBJ ===========================================================
         loss_obj = self.mse(
             exists_box * predicts_prob_obj,
             exists_box * targets_prob_obj
         )
         # PERDA PARA PROB_OBJ ===========================================================
+
+        # PERDA PARA NO_OBJ CLASSES =====================================================
+        no_obj_box = 1 - exists_box
+        loss_noobj_classes = self.mse(
+            no_obj_box * predicts_prob_obj,
+            no_obj_box * targets_prob_obj
+        )
+        # PERDA PARA NO_OBJ CLASSES =====================================================
+
+        # print (f'({loss_xcyc=} \n {loss_wh=} \n {loss_classes=} \n{loss_noobj_classes=} \n {loss_obj=})')
         
-        return (loss_xcyc + loss_wh + loss_classes + 0.5*loss_noobj_classes + loss_obj)
+        return (loss_xcyc + loss_wh + loss_classes + loss_noobj_classes + loss_obj)
 
 def testar_loss():
 
