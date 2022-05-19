@@ -127,7 +127,7 @@ def analisar_resultado_epoca(dataloader_, model, epoch, class_threshold=0.5, dev
 
     img_pil.save(f'{results_dir}result_{epoch}.jpg')
 
-def predict(model, img_pil, class_threshold=0.5):
+def predict(model, img_pil, prob_threshold=0.96, class_threshold=0.5):
 
     transformer = transforms.Compose([
         transforms.Resize((model.IMG_SIZE, model.IMG_SIZE)),
@@ -164,10 +164,10 @@ def predict(model, img_pil, class_threshold=0.5):
             bboxes[:, -3] = bboxes[:, -3] + linha*cell_size # soma yc com offset Y
             for anchor_num, box in enumerate(bboxes):
                 classes = box[:C]
+                prob_obj = box[C]
                 classes = torch.softmax(classes, dim=-1)
                 prob_class, ind_class = classes.max(0)
-                if (prob_class > class_threshold):
-                    prob_obj = box[C]
+                if (prob_class > class_threshold and prob_obj >= prob_threshold):
                     xc, yc, w, h = box[-4:]
                     x1, y1, x2, y2 = xc-w/2, yc-h/2, xc+w/2, yc+h/2
                     x1, y1, x2, y2 = x1*imgw, y1*imgh, x2*imgw, y2*imgh
