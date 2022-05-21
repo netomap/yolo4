@@ -1,7 +1,7 @@
 import torch
 from model import Model
 from loss import Yolo_Loss
-from utils import preparar_dataloaders, validar_epoca, salvar_checkpoint, analisar_resultado_epoca
+from utils import preparar_dataloaders, validar_epoca, salvar_checkpoint, analisar_resultado_epoca, carregar_modelo
 from argparse import ArgumentParser
 from tqdm import tqdm
 from colorama import Fore
@@ -15,6 +15,7 @@ parser.add_argument('--lr', type=float, default=1e-4, help='LEARNING RATE.')
 parser.add_argument('--batchsize', type=int, default=16, help='Tamanho do lote.')
 parser.add_argument('--ct', type=float, default=0.5, help='Class threshold.')
 parser.add_argument('--g', type=float, default=0.5, help='GAMMA STEP DO LEARNING RATE')
+parser.add_argument('--ck', type=str, default='', help='Nome do arquivo do CheckPoint')
 
 args = parser.parse_args()
 print (f'{Fore.RED}{args}{Fore.RESET}')
@@ -27,13 +28,19 @@ LEARNING_RATE = args.lr
 BATCH_SIZE = args.batchsize
 CLASS_THRESHOLD = args.ct
 GAMMA = args.g
+CHECKPOINT_PATH = args.ck
 
 print ('preparando device...')
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print (f'device: {DEVICE}')
 
-print ('preparando modelo...')
-model = Model(S, C, IMG_SIZE)
+if (CHECKPOINT_PATH != ''): # carregar um checkpoint
+    print (f'carregando modelo {CHECKPOINT_PATH}')
+    model = carregar_modelo(CHECKPOINT_PATH)
+else:
+    print ('preparando modelo...')
+    model = Model(S, C, IMG_SIZE)
+
 B = len(model.anchors)
 model.to(DEVICE)
 model.anchors = model.anchors.to(DEVICE)
